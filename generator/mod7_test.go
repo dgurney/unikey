@@ -8,11 +8,11 @@ import (
 
 func Benchmark10digit100(b *testing.B) {
 	cd := Mod7CD{}
-	dch := make(chan string)
+	kch := make(chan KeyGenerator)
 	for n := 0; n < b.N; n++ {
 		for i := 0; i < 100; i++ {
-			go cd.Generate(dch)
-			<-dch
+			go Generate(cd, kch)
+			<-kch
 		}
 	}
 }
@@ -20,12 +20,12 @@ func Benchmark10digit100(b *testing.B) {
 func TestCD(t *testing.T) {
 	cd := Mod7CD{}
 	ka := make([]validator.Mod7CD, 0)
-	kch := make(chan string)
+	kch := make(chan KeyGenerator)
 	vch := make(chan bool)
 	for i := 0; i < 500000; i++ {
-		go cd.Generate(kch)
-		k := validator.Mod7CD{Key: <-kch}
-		ka = append(ka, k)
+		go Generate(cd, kch)
+		k := <-kch
+		ka = append(ka, validator.Mod7CD{k.String()})
 	}
 	for _, k := range ka {
 		t.Log("Validating", k.Key)
@@ -40,12 +40,12 @@ func TestCD(t *testing.T) {
 func TestMod7ElevenCD(t *testing.T) {
 	cd := Mod7ElevenCD{}
 	ka := make([]validator.Mod7ElevenCD, 0)
-	kch := make(chan string)
+	kch := make(chan KeyGenerator)
 	vch := make(chan bool)
 	for i := 0; i < 500000; i++ {
-		go cd.Generate(kch)
-		k := validator.Mod7ElevenCD{Key: <-kch}
-		ka = append(ka, k)
+		go Generate(cd, kch)
+		k := <-kch
+		ka = append(ka, validator.Mod7ElevenCD{k.String()})
 	}
 	for _, k := range ka {
 		t.Log("Validating", k.Key)
@@ -60,12 +60,12 @@ func TestMod7ElevenCD(t *testing.T) {
 func TestOEM(t *testing.T) {
 	cd := Mod7OEM{}
 	ka := make([]validator.Mod7OEM, 0)
-	kch := make(chan string)
+	kch := make(chan KeyGenerator)
 	vch := make(chan bool)
 	for i := 0; i < 500000; i++ {
-		go cd.Generate(kch)
-		k := validator.Mod7OEM{Key: <-kch}
-		ka = append(ka, k)
+		go Generate(cd, kch)
+		k := <-kch
+		ka = append(ka, validator.Mod7OEM{k.String()})
 	}
 	for _, k := range ka {
 		t.Log("Validating", k.Key)

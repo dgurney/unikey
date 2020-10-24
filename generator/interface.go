@@ -1,5 +1,6 @@
 package generator
 
-type keyGenerator interface {
-	Generate(output chan string)
+type KeyGenerator interface {
+	Generate(k chan KeyGenerator)
+	String() string
 }

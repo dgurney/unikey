@@ -16,6 +16,14 @@ package validator
 
 import "strconv"
 
+func checkdigitCheck(k int64) bool {
+	// Check digit cannot be 0 or >= 8.
+	if k%10 == 0 || k%10 >= 8 {
+		return false
+	}
+	return true
+}
+
 // Mod7OEM is a mod7 OEM key
 type Mod7OEM struct {
 	Key string
