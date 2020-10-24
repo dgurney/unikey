@@ -1,5 +1,6 @@
 package validator
 
-type keyValidator interface {
-	Validate(key string, valid chan bool)
+// KeyValidator is exactly what it says on the tin.
+type KeyValidator interface {
+	Validate(valid chan bool)
 }
