@@ -94,11 +94,9 @@ func (c Mod7ElevenCD) Generate(k chan KeyGenerator) {
 			}
 		}
 	}
-	g := Mod7ElevenCD{
-		first,
-		second,
-	}
-	k <- g
+	c.First = first
+	c.Second = second
+	k <- c
 }
 
 func (c Mod7CD) String() string {
@@ -131,11 +129,9 @@ func (c Mod7CD) Generate(k chan KeyGenerator) {
 			}
 		}
 	}
-	g := Mod7CD{
-		first,
-		second,
-	}
-	k <- g
+	c.First = first
+	c.Second = second
+	k <- c
 }
 
 func (o Mod7OEM) String() string {
@@ -178,11 +174,10 @@ func (o Mod7OEM) Generate(k chan KeyGenerator) {
 	}
 
 	// The fourth segment is truly irrelevant
-	f := rand.Intn(99999)
-	k <- Mod7OEM{
-		first,
-		"OEM",
-		third,
-		f,
-	}
+	fourth := rand.Intn(99999)
+	o.First = first
+	o.Second = "OEM"
+	o.Third = third
+	o.Fourth = fourth
+	k <- o
 }
