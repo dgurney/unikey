@@ -17,6 +17,28 @@ func Benchmark10digit100(b *testing.B) {
 	}
 }
 
+func Benchmark11digit100(b *testing.B) {
+	cd := Mod7ElevenCD{}
+	kch := make(chan KeyGenerator)
+	for n := 0; n < b.N; n++ {
+		for i := 0; i < 100; i++ {
+			go Generate(cd, kch)
+			<-kch
+		}
+	}
+}
+
+func BenchmarkOEM100(b *testing.B) {
+	cd := Mod7OEM{}
+	kch := make(chan KeyGenerator)
+	for n := 0; n < b.N; n++ {
+		for i := 0; i < 100; i++ {
+			go Generate(cd, kch)
+			<-kch
+		}
+	}
+}
+
 func TestCD(t *testing.T) {
 	cd := Mod7CD{}
 	ka := make([]validator.Mod7CD, 0)
