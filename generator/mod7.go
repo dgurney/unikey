@@ -18,12 +18,7 @@ import (
 	"fmt"
 	"math/rand"
 	"strconv"
-	"time"
 )
-
-func init() {
-	rand.Seed(time.Now().UnixNano())
-}
 
 // Mod7OEM is a mod7 OEM key
 type Mod7OEM struct {
