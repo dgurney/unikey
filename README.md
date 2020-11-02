@@ -9,3 +9,4 @@ If you want to contribute, keep the following in mind:
 
 - Do not use non-public source code leaks or documentation as references. If the leaked source code or documentation is widely distributed, it's fine to use it.
 - Make your code fast *and* understandable.
+- Write tests for all generation and validation functionality.
