@@ -26,40 +26,46 @@ func checkdigitCheck(k int64) bool {
 
 // Mod7OEM is a mod7 OEM key
 type Mod7OEM struct {
-	Key string
+	First  string
+	Second string
+	Third  string
+	Fourth string
 }
 
 // Mod7ElevenCD is an 11-digit mod7 CD key
 type Mod7ElevenCD struct {
-	Key string
+	First  string
+	Second string
 }
 
 // Mod7CD is an 10-digit mod7 CD key
 type Mod7CD struct {
-	Key string
+	First  string
+	Second string
 }
 
 // Validate validates an 11-digit mod7 CD key
 func (e Mod7ElevenCD) Validate(v chan bool) {
-	if len(e.Key) != 12 {
+	// +1 to account for the dash
+	if len(e.First)+len(e.Second)+1 != 12 {
 		v <- false
 		return
 	}
 
-	_, err := strconv.ParseInt(e.Key[0:4], 10, 0)
+	_, err := strconv.ParseInt(e.First[0:4], 10, 0)
 	if err != nil {
 		v <- false
 		return
 	}
-	main, err := strconv.ParseInt(e.Key[5:12], 10, 0)
+	main, err := strconv.ParseInt(e.Second[0:7], 10, 0)
 	if err != nil {
 		v <- false
 		return
 	}
 
 	// Error is safe to discard since we checked if it's a number before.
-	last, _ := strconv.ParseInt(e.Key[3:4], 10, 0)
-	third, _ := strconv.ParseInt(e.Key[2:3], 10, 0)
+	last, _ := strconv.ParseInt(e.First[3:4], 10, 0)
+	third, _ := strconv.ParseInt(e.First[2:3], 10, 0)
 	if last != third+1 && last != third+2 {
 		switch {
 		case third == 8 && last != 9 && last != 0:
@@ -87,17 +93,18 @@ func (e Mod7ElevenCD) Validate(v chan bool) {
 
 // Validate validates a 10-digit mod7 CD key
 func (c Mod7CD) Validate(v chan bool) {
-	if len(c.Key) != 11 {
+	// +1 to account for the dash
+	if len(c.First)+len(c.Second)+1 != 11 {
 		v <- false
 		return
 	}
 
-	site, err := strconv.ParseInt(c.Key[0:3], 10, 0)
+	site, err := strconv.ParseInt(c.First[0:3], 10, 0)
 	if err != nil {
 		v <- false
 		return
 	}
-	main, err := strconv.ParseInt(c.Key[4:11], 10, 0)
+	main, err := strconv.ParseInt(c.Second[0:7], 10, 0)
 	if err != nil {
 		v <- false
 		return
@@ -123,33 +130,34 @@ func (c Mod7CD) Validate(v chan bool) {
 
 // Validate validates a mod7 OEM key
 func (o Mod7OEM) Validate(v chan bool) {
-	if len(o.Key) != 23 {
+	// +3 to account for dashes
+	if len(o.First)+len(o.Second)+len(o.Third)+len(o.Fourth)+3 != 23 {
 		v <- false
 		return
 	}
 
-	_, err := strconv.ParseInt(o.Key[0:5], 10, 0)
+	_, err := strconv.ParseInt(o.First[0:5], 10, 0)
 	if err != nil {
 		v <- false
 		return
 	}
-	th, err := strconv.ParseInt(o.Key[10:17], 10, 0)
+	th, err := strconv.ParseInt(o.Third[0:7], 10, 0)
 	if err != nil {
 		v <- false
 		return
 	}
-	_, err = strconv.ParseInt(o.Key[18:], 10, 0)
+	_, err = strconv.ParseInt(o.Fourth[0:], 10, 0)
 	if err != nil {
 		v <- false
 		return
 	}
-	julian, err := strconv.ParseInt(o.Key[0:3], 10, 0)
+	julian, err := strconv.ParseInt(o.First[0:3], 10, 0)
 	if julian == 0 || julian > 366 {
 		v <- false
 		return
 	}
 
-	year := o.Key[3:5]
+	year := o.First[3:5]
 	validYears := map[string]string{"95": "95", "96": "96", "97": "97", "98": "98", "99": "99", "00": "00", "01": "01", "02": "02", "03": "03"}
 	_, valid := validYears[year]
 	if !valid {
@@ -157,13 +165,12 @@ func (o Mod7OEM) Validate(v chan bool) {
 		return
 	}
 
-	// nice
-	if o.Key[6:9] != "OEM" {
+	if o.Second != "OEM" {
 		v <- false
 		return
 	}
 
-	third := o.Key[10:17]
+	third := o.Third[0:7]
 	if string(third[0]) != "0" {
 		v <- false
 		return

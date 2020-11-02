@@ -1,6 +1,7 @@
 package generator
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/dgurney/unikey/validator"
@@ -47,13 +48,14 @@ func TestCD(t *testing.T) {
 	for i := 0; i < 500000; i++ {
 		go Generate(cd, kch)
 		k := <-kch
-		ka = append(ka, validator.Mod7CD{k.String()})
+		c, _ := k.(Mod7CD)
+		ka = append(ka, validator.Mod7CD{fmt.Sprintf("%03d", c.First), fmt.Sprintf("%07d", c.Second)})
 	}
 	for _, k := range ka {
-		t.Log("Validating", k.Key)
+		t.Logf("Validating %s-%s", k.First, k.Second)
 		go validator.Validate(k, vch)
 		if !<-vch {
-			t.Errorf("Generated key %s is invalid!", k.Key)
+			t.Errorf("Generated key %s-%s is invalid!", k.First, k.Second)
 		}
 
 	}
@@ -67,13 +69,14 @@ func TestMod7ElevenCD(t *testing.T) {
 	for i := 0; i < 500000; i++ {
 		go Generate(cd, kch)
 		k := <-kch
-		ka = append(ka, validator.Mod7ElevenCD{k.String()})
+		e := k.(Mod7ElevenCD)
+		ka = append(ka, validator.Mod7ElevenCD{e.First, fmt.Sprintf("%07d", e.Second)})
 	}
 	for _, k := range ka {
-		t.Log("Validating", k.Key)
+		t.Logf("Validating %s-%s", k.First, k.Second)
 		go k.Validate(vch)
 		if !<-vch {
-			t.Errorf("Generated key %s is invalid!", k.Key)
+			t.Errorf("Generated key %s-%s is invalid!", k.First, k.Second)
 		}
 
 	}
@@ -87,13 +90,14 @@ func TestOEM(t *testing.T) {
 	for i := 0; i < 500000; i++ {
 		go Generate(cd, kch)
 		k := <-kch
-		ka = append(ka, validator.Mod7OEM{k.String()})
+		o := k.(Mod7OEM)
+		ka = append(ka, validator.Mod7OEM{o.First, o.Second, fmt.Sprintf("%07d", o.Third), fmt.Sprintf("%05d", o.Fourth)})
 	}
 	for _, k := range ka {
-		t.Log("Validating", k.Key)
+		t.Logf("Validating %s-%s-%s-%s", k.First, k.Second, k.Third, k.Fourth)
 		go k.Validate(vch)
 		if !<-vch {
-			t.Errorf("Generated key %s is invalid!", k.Key)
+			t.Errorf("Generated key %s-%s-%s-%s is invalid!", k.First, k.Second, k.Third, k.Fourth)
 		}
 
 	}
