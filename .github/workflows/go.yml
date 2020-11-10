@@ -8,8 +8,8 @@ on:
 
 jobs:
 
-  build:
-    name: Build
+  test:
+    name: Test
     runs-on: ubuntu-latest
     steps:
 
@@ -29,5 +29,5 @@ jobs:
             dep ensure
         fi
 
-    - name: Test
+    - name: Run all tests
       run: go test ./...
