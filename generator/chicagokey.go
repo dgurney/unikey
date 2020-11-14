@@ -78,6 +78,6 @@ func (c ChicagoCredentials) Generate(k chan KeyGenerator) {
 
 	c.Site = site
 	// Middle must be mod9'd
-	c.Password = fmt.Sprintf("%d%s", middle%9, last)
+	c.Password = fmt.Sprintf("%s%d%s", pass, middle%9, last)
 	k <- c
 }
