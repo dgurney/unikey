@@ -41,7 +41,7 @@ func getText(build string) string {
 		// 4.71.0225
 		return "Microsoft Internet Explorer 4.0 Beta - Sept. 1996 release"
 	}
-	return ""
+	panic("invalid build")
 }
 
 func (c ChicagoCredentials) String() string {
