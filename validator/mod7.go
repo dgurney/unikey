@@ -141,7 +141,7 @@ func (o Mod7OEM) Validate() error {
 	}
 	julian, err := strconv.ParseInt(o.First[0:3], 10, 0)
 	if julian == 0 || julian > 366 {
-		return fmt.Errorf("date should be within 001-366, not %d", julian)
+		return fmt.Errorf("date should be within 001-366, not %03d", julian)
 	}
 
 	year := o.First[3:5]
