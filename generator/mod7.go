@@ -53,7 +53,7 @@ func (c Mod7ElevenCD) String() string {
 }
 
 // Generate generates an 11-digit mod7 CD key.
-func (c Mod7ElevenCD) Generate(k chan KeyGenerator) {
+func (c Mod7ElevenCD) Generate() (KeyGenerator, error) {
 	// Generate the first segment of the key.
 	// Formula for last digit: third digit + 1 or 2. If the result is more than 9, it's 0 or 1.
 	s := rand.Intn(999)
@@ -91,7 +91,7 @@ func (c Mod7ElevenCD) Generate(k chan KeyGenerator) {
 	}
 	c.First = first
 	c.Second = second
-	k <- c
+	return c, nil
 }
 
 func (c Mod7CD) String() string {
@@ -99,7 +99,7 @@ func (c Mod7CD) String() string {
 }
 
 // Generate generates a 10-digit mod7 CD key.
-func (c Mod7CD) Generate(k chan KeyGenerator) {
+func (c Mod7CD) Generate() (KeyGenerator, error) {
 	// Generate the so-called site number, which is the first segment of the key.
 	first := rand.Intn(998)
 	// Technically 999 could be omitted as we don't generate a number that high, but we include it for posterity anyway.
@@ -126,7 +126,7 @@ func (c Mod7CD) Generate(k chan KeyGenerator) {
 	}
 	c.First = first
 	c.Second = second
-	k <- c
+	return c, nil
 }
 
 func (o Mod7OEM) String() string {
@@ -134,7 +134,7 @@ func (o Mod7OEM) String() string {
 }
 
 // Generate generates a mod7 OEM key
-func (o Mod7OEM) Generate(k chan KeyGenerator) {
+func (o Mod7OEM) Generate() (KeyGenerator, error) {
 	// Generate the first segment of the key. The first three digits represent the julian date the COA was printed (001 to 366), and the last two are the year.
 	// The year cannot be below 95 or above 03 (not Y2K-compliant D:).
 	d := 0
@@ -174,5 +174,5 @@ func (o Mod7OEM) Generate(k chan KeyGenerator) {
 	o.Second = "OEM"
 	o.Third = third
 	o.Fourth = fourth
-	k <- o
+	return o, nil
 }

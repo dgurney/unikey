@@ -14,7 +14,11 @@ package validator
    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import "strconv"
+import (
+	"errors"
+	"fmt"
+	"strconv"
+)
 
 func checkdigitCheck(k int64) bool {
 	// Check digit cannot be 0 or >= 8.
@@ -45,145 +49,123 @@ type Mod7CD struct {
 }
 
 // Validate validates an 11-digit mod7 CD key
-func (e Mod7ElevenCD) Validate(v chan bool) {
+func (e Mod7ElevenCD) Validate() error {
 	// +1 to account for the dash
 	if len(e.First)+len(e.Second)+1 != 12 {
-		v <- false
-		return
+		return errors.New("key is not the correct length")
 	}
 
-	_, err := strconv.ParseInt(e.First[0:4], 10, 0)
+	first, err := strconv.ParseInt(e.First[0:4], 10, 0)
 	if err != nil {
-		v <- false
-		return
+		return errors.New("first segment is not a number")
 	}
 	main, err := strconv.ParseInt(e.Second[0:7], 10, 0)
 	if err != nil {
-		v <- false
-		return
+		return errors.New("second segment is not a number")
 	}
 
 	// Error is safe to discard since we checked if it's a number before.
-	last, _ := strconv.ParseInt(e.First[3:4], 10, 0)
 	third, _ := strconv.ParseInt(e.First[2:3], 10, 0)
+	last := first % 10
 	if last != third+1 && last != third+2 {
 		switch {
 		case third == 8 && last != 9 && last != 0:
-			v <- false
-			return
+			return fmt.Errorf("last digit of the first segment should be 9 or 0, not %d", last)
 		case third+1 >= 9 && last == 0 || third+2 >= 9 && last == 1:
 			break
 		default:
-			v <- false
-			return
+			return fmt.Errorf("last digit of the first segment should be %d or %d, not %d", (third+1)%10, (third+2)%10, last)
 		}
 	}
 
 	if !checkdigitCheck(main) {
-		v <- false
-		return
+		return fmt.Errorf("check digit of the second segment cannot be 0 or >= 8, not %d", main%10)
 	}
 	sum := digitsum(main)
 	if sum%7 != 0 {
-		v <- false
-		return
+		return fmt.Errorf("digit sum of the second segment should be divisible by 7, %d is not", sum)
 	}
-	v <- true
+	return nil
 }
 
 // Validate validates a 10-digit mod7 CD key
-func (c Mod7CD) Validate(v chan bool) {
+func (c Mod7CD) Validate() error {
 	// +1 to account for the dash
 	if len(c.First)+len(c.Second)+1 != 11 {
-		v <- false
-		return
+		return errors.New("key is not the correct length")
+
 	}
 
 	site, err := strconv.ParseInt(c.First[0:3], 10, 0)
 	if err != nil {
-		v <- false
-		return
+		return errors.New("first segment is not a number")
 	}
 	main, err := strconv.ParseInt(c.Second[0:7], 10, 0)
 	if err != nil {
-		v <- false
-		return
+		return errors.New("last segment is not a number")
 	}
 
 	invalidSites := map[int64]int{333: 333, 444: 444, 555: 555, 666: 666, 777: 777, 888: 888, 999: 999}
 	_, invalid := invalidSites[site]
 	if invalid {
-		v <- false
-		return
+		return errors.New("site number should not be 333, 444, 555, 666, 777, 888, or 999")
 	}
 	if !checkdigitCheck(main) {
-		v <- false
-		return
+		return fmt.Errorf("check digit of the second segment cannot be 0 or >= 8, not %d", main%10)
 	}
 	sum := digitsum(main)
 	if sum%7 != 0 {
-		v <- false
-		return
+		return fmt.Errorf("digit sum of the second segment should be divisible by 7, %d is not", sum)
 	}
-	v <- true
+	return nil
 }
 
 // Validate validates a mod7 OEM key
-func (o Mod7OEM) Validate(v chan bool) {
+func (o Mod7OEM) Validate() error {
 	// +3 to account for dashes
 	if len(o.First)+len(o.Second)+len(o.Third)+len(o.Fourth)+3 != 23 {
-		v <- false
-		return
+		return errors.New("key is not the correct length")
 	}
 
 	_, err := strconv.ParseInt(o.First[0:5], 10, 0)
 	if err != nil {
-		v <- false
-		return
+		return errors.New("first segment is not a number")
 	}
 	th, err := strconv.ParseInt(o.Third[0:7], 10, 0)
 	if err != nil {
-		v <- false
-		return
+		return errors.New("third segment is not a number")
 	}
 	_, err = strconv.ParseInt(o.Fourth[0:], 10, 0)
 	if err != nil {
-		v <- false
-		return
+		return errors.New("fourth segment is not a number")
 	}
 	julian, err := strconv.ParseInt(o.First[0:3], 10, 0)
 	if julian == 0 || julian > 366 {
-		v <- false
-		return
+		return fmt.Errorf("date should be within 001-366, not %d", julian)
 	}
 
 	year := o.First[3:5]
 	validYears := map[string]string{"95": "95", "96": "96", "97": "97", "98": "98", "99": "99", "00": "00", "01": "01", "02": "02", "03": "03"}
 	_, valid := validYears[year]
 	if !valid {
-		v <- false
-		return
+		return fmt.Errorf("year cannot be less than 95 or above 03, not %s", year)
 	}
 
 	if o.Second != "OEM" {
-		v <- false
-		return
+		return fmt.Errorf("second segment should be OEM, not %s", o.Second)
 	}
 
 	third := o.Third[0:7]
 	if string(third[0]) != "0" {
-		v <- false
-		return
+		return fmt.Errorf("third segment beginning should be 0, not %s", third[0:1])
 	}
 	if !checkdigitCheck(th) {
-		v <- false
-		return
+		return fmt.Errorf("check digit of the third segment cannot be 0 or >= 8, not %d", th%10)
 	}
 	sum := digitsum(th)
 	if sum%7 != 0 {
-		v <- false
-		return
+		return fmt.Errorf("digit sum of the third segment should be divisible by 7, %d is not", sum)
 	}
 
-	v <- true
+	return nil
 }
