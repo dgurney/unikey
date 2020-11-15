@@ -1,6 +1,7 @@
 package generator
 
 // Generate generates a key of the specified type
-func Generate(k KeyGenerator, ch chan KeyGenerator) {
-	k.Generate(ch)
+func Generate(k KeyGenerator) (KeyGenerator, error) {
+	key, err := k.Generate()
+	return key, err
 }
