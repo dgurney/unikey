@@ -79,7 +79,7 @@ func (e Mod7ElevenCD) Validate() error {
 	}
 
 	if !checkdigitCheck(main) {
-		return fmt.Errorf("check digit of the second segment cannot be 0 or >= 8, not %d", main%10)
+		return fmt.Errorf("check digit of the second segment cannot be 0 or >= 8, got %d", main%10)
 	}
 	sum := digitsum(main)
 	if sum%7 != 0 {
