@@ -79,7 +79,7 @@ func (e Mod7ElevenCD) Validate() error {
 	}
 
 	if !checkdigitCheck(main) {
-		return fmt.Errorf("check digit of the second segment cannot be 0 or >= 8, got %d", main%10)
+		return fmt.Errorf("check digit of the second segment should be > 0 and < 8, not %d", main%10)
 	}
 	sum := digitsum(main)
 	if sum%7 != 0 {
@@ -111,7 +111,7 @@ func (c Mod7CD) Validate() error {
 		return errors.New("site number should not be 333, 444, 555, 666, 777, 888, or 999")
 	}
 	if !checkdigitCheck(main) {
-		return fmt.Errorf("check digit of the second segment cannot be 0 or >= 8, not %d", main%10)
+		return fmt.Errorf("check digit of the second segment should be > 0 and < 8, not %d", main%10)
 	}
 	sum := digitsum(main)
 	if sum%7 != 0 {
@@ -148,7 +148,7 @@ func (o Mod7OEM) Validate() error {
 	validYears := map[string]string{"95": "95", "96": "96", "97": "97", "98": "98", "99": "99", "00": "00", "01": "01", "02": "02", "03": "03"}
 	_, valid := validYears[year]
 	if !valid {
-		return fmt.Errorf("year cannot be less than 95 or above 03, not %s", year)
+		return fmt.Errorf("year should be within 95-03, not %s", year)
 	}
 
 	if o.Second != "OEM" {
@@ -160,7 +160,7 @@ func (o Mod7OEM) Validate() error {
 		return fmt.Errorf("third segment beginning should be 0, not %s", third[0:1])
 	}
 	if !checkdigitCheck(th) {
-		return fmt.Errorf("check digit of the third segment cannot be 0 or >= 8, not %d", th%10)
+		return fmt.Errorf("check digit of the third segment should be > 0 and < 8, not %d", th%10)
 	}
 	sum := digitsum(th)
 	if sum%7 != 0 {
