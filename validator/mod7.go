@@ -18,6 +18,7 @@ import (
 	"errors"
 	"fmt"
 	"strconv"
+	"strings"
 )
 
 func checkdigitCheck(k int64) bool {
@@ -151,7 +152,7 @@ func (o Mod7OEM) Validate() error {
 		return fmt.Errorf("year should be within 95-03, not %s", year)
 	}
 
-	if o.Second != "OEM" {
+	if strings.ToUpper(o.Second) != "OEM" {
 		return fmt.Errorf("second segment should be OEM, not %s", o.Second)
 	}
 
