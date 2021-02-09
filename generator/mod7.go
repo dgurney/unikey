@@ -149,7 +149,8 @@ func (o Mod7OEM) Generate() (KeyGenerator, error) {
 		}
 	}
 	date := fmt.Sprintf("%03d", d)
-	years := []string{"95", "96", "97", "98", "99", "00", "01", "02", "03"}
+	// 03 is also valid for many later products, but for Windows 95 it is not
+	years := []string{"95", "96", "97", "98", "99", "00", "01", "02"}
 	year := years[rand.Intn(len(years))]
 	first = date + year
 
