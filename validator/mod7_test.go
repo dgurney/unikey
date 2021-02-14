@@ -100,7 +100,7 @@ func TestMod7Validation(t *testing.T) {
 		default:
 			t.Logf("%v is invalid, as expected.", i)
 		case err == nil:
-			t.Errorf("Valid key %v passed validation!", i)
+			t.Errorf("Invalid key %v passed validation!", i)
 		}
 	}
 }
