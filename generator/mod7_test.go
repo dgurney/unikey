@@ -40,7 +40,7 @@ func TestCD(t *testing.T) {
 	for i := 0; i < 500000; i++ {
 		k, _ := Generate(cd)
 		c, _ := k.(Mod7CD)
-		ka = append(ka, validator.Mod7CD{fmt.Sprintf("%03d", c.First), fmt.Sprintf("%07d", c.Second)})
+		ka = append(ka, validator.Mod7CD{fmt.Sprintf("%03d", c.First), fmt.Sprintf("%07d", c.Second), false})
 	}
 	for _, k := range ka {
 		t.Logf("Validating %s-%s", k.First, k.Second)
@@ -76,7 +76,7 @@ func TestOEM(t *testing.T) {
 	for i := 0; i < 500000; i++ {
 		k, _ := Generate(cd)
 		o := k.(Mod7OEM)
-		ka = append(ka, validator.Mod7OEM{o.First, o.Second, fmt.Sprintf("%07d", o.Third), fmt.Sprintf("%05d", o.Fourth)})
+		ka = append(ka, validator.Mod7OEM{o.First, o.Second, fmt.Sprintf("%07d", o.Third), fmt.Sprintf("%05d", o.Fourth), false})
 	}
 	for _, k := range ka {
 		t.Logf("Validating %s-%s-%s-%s", k.First, k.Second, k.Third, k.Fourth)

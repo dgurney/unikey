@@ -35,6 +35,7 @@ type Mod7OEM struct {
 	Second string
 	Third  string
 	Fourth string
+	Is95   bool
 }
 
 // Mod7ElevenCD is an 11-digit mod7 CD key
@@ -47,6 +48,7 @@ type Mod7ElevenCD struct {
 type Mod7CD struct {
 	First  string
 	Second string
+	Is95   bool
 }
 
 // Validate validates an 11-digit mod7 CD key
@@ -111,7 +113,7 @@ func (c Mod7CD) Validate() error {
 	if invalid {
 		return errors.New("site number should not be 333, 444, 555, 666, 777, 888, or 999")
 	}
-	if !checkdigitCheck(main) {
+	if !checkdigitCheck(main) && !c.Is95 {
 		return fmt.Errorf("check digit of the second segment should be > 0 and < 8, not %d", main%10)
 	}
 	sum := digitsum(main)
@@ -147,9 +149,17 @@ func (o Mod7OEM) Validate() error {
 
 	year := o.First[3:5]
 	validYears := map[string]string{"95": "95", "96": "96", "97": "97", "98": "98", "99": "99", "00": "00", "01": "01", "02": "02", "03": "03"}
+	if o.Is95 {
+		validYears = map[string]string{"95": "95", "96": "96", "97": "97", "98": "98", "99": "99", "00": "00", "01": "01", "02": "02"}
+	}
 	_, valid := validYears[year]
 	if !valid {
-		return fmt.Errorf("year should be within 95-03, not %s", year)
+		switch {
+		default:
+			return fmt.Errorf("year should be within 95-03, not %s", year)
+		case o.Is95:
+			return fmt.Errorf("year should be within 95-02 for Windows 95, not %s", year)
+		}
 	}
 
 	if strings.ToUpper(o.Second) != "OEM" {
