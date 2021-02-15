@@ -111,6 +111,7 @@ func (c Mod7CD) Generate() (KeyGenerator, error) {
 
 	// Generate the second segment of the key. The digit sum of the seven numbers must be divisible by seven.
 	// The last digit is the check digit. The check digit cannot be 0 or >=8.
+	// Note that Windows 95 does not have a check digit check.
 	second := 0
 	for {
 		second = rand.Intn(9999999)
@@ -135,6 +136,7 @@ func (o Mod7OEM) String() string {
 func (o Mod7OEM) Generate() (KeyGenerator, error) {
 	// Generate the first segment of the key. The first three digits represent the julian date the COA was printed (001 to 366), and the last two are the year.
 	// The year cannot be below 95 or above 03 (not Y2K-compliant D:).
+	// The maximum year for Windows 95 is 02.
 	d := 0
 	first := ""
 	nonzero := false
