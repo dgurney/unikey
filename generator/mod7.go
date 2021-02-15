@@ -17,7 +17,6 @@ package generator
 import (
 	"fmt"
 	"math/rand"
-	"strconv"
 )
 
 // Mod7OEM is a mod7 OEM key
@@ -57,8 +56,7 @@ func (c Mod7ElevenCD) Generate() (KeyGenerator, error) {
 	// Generate the first segment of the key.
 	// Formula for last digit: third digit + 1 or 2. If the result is more than 9, it's 0 or 1.
 	s := rand.Intn(999)
-	site := fmt.Sprintf("%03d", s)
-	last, _ := strconv.Atoi(site[len(site)-1:])
+	last := s % 10
 	first := ""
 	fourth := 0
 	switch {
@@ -73,7 +71,7 @@ func (c Mod7ElevenCD) Generate() (KeyGenerator, error) {
 	case fourth > 10:
 		fourth = 1
 	}
-	first = fmt.Sprintf("%s%d", site, fourth)
+	first = fmt.Sprintf("%03d%d", s, fourth)
 
 	// Generate the second segment of the key. The digit sum of the seven numbers must be divisible by seven.
 	// The last digit is the check digit. The check digit cannot be 0 or >=8.
