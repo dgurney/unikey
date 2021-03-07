@@ -142,7 +142,9 @@ func (o Mod7OEM) Validate() error {
 	if err != nil {
 		return errors.New("fourth segment is not a number")
 	}
-	julian, err := strconv.ParseInt(o.First[0:3], 10, 0)
+
+	// OK to discard error since we wouldn't be here if it wasn't a number.
+	julian, _ := strconv.ParseInt(o.First[0:3], 10, 0)
 	if julian == 0 || julian > 366 {
 		return fmt.Errorf("date should be within 001-366, not %03d", julian)
 	}
