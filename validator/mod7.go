@@ -100,7 +100,7 @@ func (c Mod7CD) Validate() error {
 	}
 
 	site, err := strconv.ParseInt(c.First[0:3], 10, 0)
-	if err != nil {
+	if err != nil && !c.Is95 {
 		return errors.New("first segment is not a number")
 	}
 	main, err := strconv.ParseInt(c.Second[0:7], 10, 0)

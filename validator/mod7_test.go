@@ -30,6 +30,8 @@ var valid = []KeyValidator{
 
 	// Windows 95 does not have a check digit check
 	Mod7CD{"111", "1111109", true},
+	// Windows 95 does actually allow typing non-integer site numbers
+	Mod7CD{"AAA", "1111109", true},
 }
 
 var invalid = []KeyValidator{
