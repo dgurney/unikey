@@ -17,6 +17,7 @@ package generator
 import (
 	"fmt"
 	"math/rand"
+	"strconv"
 )
 
 // Mod7OEM is a mod7 OEM key
@@ -152,6 +153,21 @@ func (o Mod7OEM) Generate() (KeyGenerator, error) {
 	// 03 is also valid for many later products, but for Windows 95 it is not
 	years := []string{"95", "96", "97", "98", "99", "00", "01", "02"}
 	year := years[rand.Intn(len(years))]
+
+	// Check that year is actually a leap year and adjust day 366 to 365 accordingly if not
+	y2kify := func(y string) int {
+		yearInt, _ := strconv.Atoi(y)
+		switch {
+		case yearInt >= 95:
+			return 1900 + yearInt
+		default:
+			return 2000 + yearInt
+		}
+	}(year)
+	if !isLeap(y2kify) && date == "366" {
+		date = "365"
+	}
+
 	first = date + year
 
 	// The third segment (OEM is the second) must begin with a zero, but otherwise it follows the same rule as the second segment of 10-digit keys:
