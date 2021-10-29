@@ -89,19 +89,13 @@ var invalid = []KeyValidator{
 func TestMod7Validation(t *testing.T) {
 	for _, v := range valid {
 		err := Validate(v)
-		switch {
-		default:
-			t.Logf("%v is valid, as expected.", v)
-		case err != nil:
+		if err != nil {
 			t.Errorf("Valid key %v did not pass validation!", v)
 		}
 	}
 	for _, i := range invalid {
 		err := Validate(i)
-		switch {
-		default:
-			t.Logf("%v is invalid, as expected.", i)
-		case err == nil:
+		if err == nil {
 			t.Errorf("Invalid key %v passed validation!", i)
 		}
 	}
