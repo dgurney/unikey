@@ -50,7 +50,7 @@ func (c ChicagoCredentials) String() string {
 }
 
 // Generate generates credentials for the build specified in c.Build
-func (c ChicagoCredentials) Generate() (KeyGenerator, error) {
+func (c *ChicagoCredentials) Generate() error {
 	site := c.Site
 	if c.Site == "" {
 		site = fmt.Sprintf("%06d", rand.Intn(999999))
@@ -66,7 +66,7 @@ func (c ChicagoCredentials) Generate() (KeyGenerator, error) {
 	hash := md4.New()
 	text, err := getText(c.Build)
 	if err != nil {
-		return c, err
+		return err
 	}
 
 	io.WriteString(hash, site+pass+text)
@@ -89,5 +89,5 @@ func (c ChicagoCredentials) Generate() (KeyGenerator, error) {
 	c.Site = site
 	// Middle must be mod9'd
 	c.Password = fmt.Sprintf("%s%d%s", pass, middle%9, last)
-	return c, nil
+	return nil
 }

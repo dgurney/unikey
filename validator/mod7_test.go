@@ -88,13 +88,13 @@ var invalid = []KeyValidator{
 
 func TestMod7Validation(t *testing.T) {
 	for _, v := range valid {
-		err := Validate(v)
+		err := v.Validate()
 		if err != nil {
 			t.Errorf("Valid key %v did not pass validation!", v)
 		}
 	}
 	for _, i := range invalid {
-		err := Validate(i)
+		err := i.Validate()
 		if err == nil {
 			t.Errorf("Invalid key %v passed validation!", i)
 		}
