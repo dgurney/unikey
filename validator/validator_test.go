@@ -2,21 +2,8 @@ package validator
 
 import "testing"
 
-/*
-   Copyright (C) 2020 Daniel Gurney
-   This program is free software: you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation, either version 3 of the License, or
-   (at your option) any later version.
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
-   You should have received a copy of the GNU General Public License
-   along with this program.  If not, see <https://www.gnu.org/licenses/>.
-*/
-
 var valid = []KeyValidator{
+	// beginning of mod7
 	Mod7CD{"111", "1111111", false},
 	Mod7CD{"000", "0000007", false},
 	Mod7CD{"118", "5688143", false},
@@ -32,9 +19,21 @@ var valid = []KeyValidator{
 	Mod7CD{"111", "1111109", true},
 	// Windows 95 does actually allow typing non-integer site numbers
 	Mod7CD{"AAA", "1111109", true},
+	// end of mod7
+
+	// beginning of starcraft
+	StarCraft{"8206-64645-5171"},
+	StarCraft{"1234-56789-1234"},
+	StarCraft{"2374-81224-9423"},
+	// separator not enforced
+	StarCraft{"2374A81224B9423"},
+	// key can be provided without separators
+	StarCraft{"1234567891234"},
+	// end of starcraft
 }
 
 var invalid = []KeyValidator{
+	// beginning of mod7
 	Mod7CD{"1", "1", false},
 	Mod7CD{"11a", "1111111", false},
 	Mod7CD{"111", "a111111", false},
@@ -84,9 +83,25 @@ var invalid = []KeyValidator{
 
 	// Windows 95 does not allow year 03
 	Mod7OEM{"10003", "OEM", "0000007", "12345", true},
+	// end of mod7
+
+	// beginning of starcraft
+	// wrong check digits
+	StarCraft{"8206-64645-5172"},
+	StarCraft{"1234-56789-1230"},
+
+	// typo
+	StarCraft{"8260-64645-5172"},
+
+	// letter in key
+	StarCraft{"a206-64645-5172"},
+
+	// short
+	StarCraft{"8206"},
+	// end of starcraft
 }
 
-func TestMod7Validation(t *testing.T) {
+func TestValidation(t *testing.T) {
 	for _, v := range valid {
 		err := v.Validate()
 		if err != nil {

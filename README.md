@@ -4,6 +4,7 @@ Library for generating various license keys and other similar license schemes.
 ## Supported algorithms
 - Microsoft Chicago/IE4 beta site ID/password
 - Microsoft mod7
+- StarCraft
 
 ## Contributing
 If you want to contribute, keep the following in mind:
