@@ -43,7 +43,6 @@ func TestCD(t *testing.T) {
 		ka = append(ka, validator.Mod7CD{fmt.Sprintf("%03d", cd.First), fmt.Sprintf("%07d", cd.Second), false})
 	}
 	for _, k := range ka {
-		t.Logf("Validating %s-%s", k.First, k.Second)
 		err := k.Validate()
 		if err != nil {
 			t.Errorf("Generated key %s-%s is invalid!", k.First, k.Second)
@@ -61,7 +60,6 @@ func TestMod7ElevenCD(t *testing.T) {
 		ka = append(ka, validator.Mod7ElevenCD{cd.First, fmt.Sprintf("%07d", cd.Second)})
 	}
 	for _, k := range ka {
-		t.Logf("Validating %s-%s", k.First, k.Second)
 		err := k.Validate()
 		if err != nil {
 			t.Errorf("Generated key %s-%s is invalid!", k.First, k.Second)
@@ -79,7 +77,6 @@ func TestOEM(t *testing.T) {
 		ka = append(ka, validator.Mod7OEM{oem.First, oem.Second, fmt.Sprintf("%07d", oem.Third), fmt.Sprintf("%05d", oem.Fourth), false})
 	}
 	for _, k := range ka {
-		t.Logf("Validating %s-%s-%s-%s", k.First, k.Second, k.Third, k.Fourth)
 		err := k.Validate()
 		if err != nil {
 			t.Errorf("Generated key %s-%s-%s-%s is invalid!", k.First, k.Second, k.Third, k.Fourth)
