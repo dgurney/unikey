@@ -35,6 +35,7 @@ func BenchmarkOEM100(b *testing.B) {
 }
 
 func TestCD(t *testing.T) {
+	t.Parallel()
 	cd := Mod7CD{}
 	ka := make([]validator.Mod7CD, 0)
 	for i := 0; i < 500000; i++ {
@@ -52,6 +53,7 @@ func TestCD(t *testing.T) {
 }
 
 func TestMod7ElevenCD(t *testing.T) {
+	t.Parallel()
 	cd := Mod7ElevenCD{}
 	ka := make([]validator.Mod7ElevenCD, 0)
 	for i := 0; i < 500000; i++ {
@@ -69,6 +71,7 @@ func TestMod7ElevenCD(t *testing.T) {
 }
 
 func TestOEM(t *testing.T) {
+	t.Parallel()
 	oem := Mod7OEM{}
 	ka := make([]validator.Mod7OEM, 0)
 	for i := 0; i < 500000; i++ {
