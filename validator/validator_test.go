@@ -105,13 +105,13 @@ func TestValidation(t *testing.T) {
 	for _, v := range valid {
 		err := v.Validate()
 		if err != nil {
-			t.Errorf("Valid key %v did not pass validation!", v)
+			t.Errorf("valid key %v did not pass validation! (%s)", v, err)
 		}
 	}
 	for _, i := range invalid {
 		err := i.Validate()
 		if err == nil {
-			t.Errorf("Invalid key %v passed validation!", i)
+			t.Errorf("invalid key %v passed validation!", i)
 		}
 	}
 }
