@@ -17,7 +17,7 @@ func (s StarCraft) String() string {
 
 // Generate generates a StarCraft key without separators
 func (s *StarCraft) Generate() error {
-	key := fmt.Sprintf("%012d", rand.Intn(999999999999))
+	key := fmt.Sprintf("%012d", rand.Int63n(999999999999))
 	s.Key = key + strconv.Itoa(s.generateCheckDigit(key))
 	return nil
 }
