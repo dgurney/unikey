@@ -14,7 +14,7 @@ type StarCraft struct {
 // Separator character is not checked due to installer enforcing the segmentation
 func (s StarCraft) Validate() error {
 	if len(s.Key) != 15 && len(s.Key) != 13 {
-		return errors.New("key is too short")
+		return errors.New("key is not in the correct format (should be in the XXXX-XXXXX-XXXX format or 13 digits)")
 	}
 
 	bareKey := ""
