@@ -7,7 +7,7 @@ import (
 )
 
 type StarCraft struct {
-	Key string // 15-digit key (including separators), of which the last digit is a check digit
+	Key string // 15-character key (including separators), of which the last digit is a check digit
 }
 
 // String returns the key with separators in place
