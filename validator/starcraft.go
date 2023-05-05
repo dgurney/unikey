@@ -25,7 +25,7 @@ func (s StarCraft) Validate() error {
 		bareKey = s.Key[0:4] + s.Key[5:10] + s.Key[11:15]
 	}
 
-	_, err := strconv.ParseInt(bareKey, 10, 0)
+	_, err := strconv.ParseInt(bareKey, 10, 64)
 	if err != nil {
 		return errors.New("key contains non-numeric characters")
 	}
