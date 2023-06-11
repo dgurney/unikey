@@ -186,10 +186,9 @@ func (o *Mod7OEM) Generate() error {
 	}
 
 	// The fourth segment is truly irrelevant
-	fourth := rand.Intn(99999)
 	o.First = first
 	o.Second = "OEM"
 	o.Third = third
-	o.Fourth = fourth
+	o.Fourth = rand.Intn(99999)
 	return nil
 }
