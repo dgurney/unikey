@@ -78,14 +78,11 @@ func (c *Mod7ElevenCD) Generate() error {
 	// The last digit is the check digit. The check digit cannot be 0 or >=8.
 	second := 0
 	for {
-		s := rand.Intn(9999999)
+		second = rand.Intn(9999999)
 		// Perform the actual validation
-		sum := digitsum(s)
-		if sum%7 == 0 {
-			second = s
-			if checkdigitCheck(s) {
-				break
-			}
+		sum := digitsum(second)
+		if sum%7 == 0 && checkdigitCheck(second) {
+			break
 		}
 	}
 	c.First = first
@@ -118,10 +115,8 @@ func (c *Mod7CD) Generate() error {
 		second = rand.Intn(9999999)
 		// Perform the actual validation
 		sum := digitsum(second)
-		if sum%7 == 0 {
-			if checkdigitCheck(second) {
-				break
-			}
+		if sum%7 == 0 && checkdigitCheck(second) {
+			break
 		}
 	}
 	c.First = first
@@ -174,14 +169,11 @@ func (o *Mod7OEM) Generate() error {
 	// The digit sum must be divisible by seven, and the check digit cannot be 0 or >=8.
 	third := 0
 	for {
-		s := rand.Intn(999999)
+		third = rand.Intn(999999)
 		// Perform the actual validation
-		sum := digitsum(s)
-		if sum%7 == 0 {
-			third = s
-			if checkdigitCheck(s) {
-				break
-			}
+		sum := digitsum(third)
+		if sum%7 == 0 && checkdigitCheck(third) {
+			break
 		}
 	}
 
