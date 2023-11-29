@@ -152,7 +152,7 @@ func (o Mod7OEM) Validate() error {
 	year := o.First[3:5]
 	validYears := map[string]string{"95": "95", "96": "96", "97": "97", "98": "98", "99": "99", "00": "00", "01": "01", "02": "02", "03": "03"}
 	if o.Is95 {
-		validYears = map[string]string{"95": "95", "96": "96", "97": "97", "98": "98", "99": "99", "00": "00", "01": "01", "02": "02"}
+		delete(validYears, "03")
 	}
 	_, valid := validYears[year]
 	if !valid {
