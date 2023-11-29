@@ -133,17 +133,12 @@ func (o *Mod7OEM) Generate() error {
 	// Generate the first segment of the key. The first three digits represent the julian date the COA was printed (001 to 366), and the last two are the year.
 	// The year cannot be below 95 or above 03 (not Y2K-compliant D:).
 	// The maximum year for Windows 95 is 02.
-	d := 0
-	first := ""
-	nonzero := false
-	for !nonzero {
-		switch {
-		case d != 0:
-			nonzero = true
-		default:
-			d = rand.Intn(366)
-		}
+	d := rand.Intn(366)
+	for d == 0 {
+		d = rand.Intn(366)
 	}
+	first := ""
+
 	date := fmt.Sprintf("%03d", d)
 	// 03 is also valid for many later products, but for Windows 95 it is not
 	years := []string{"95", "96", "97", "98", "99", "00", "01", "02"}
