@@ -22,15 +22,15 @@ import (
 
 // Mod7OEM is a mod7 OEM key
 type Mod7OEM struct {
-	First  string
+	First  string // This is a string instead of int to maintain generator simplicity and performance
 	Second string
-	Third  int
+	Third  int // you must prepend 0 if using this field directly
 	Fourth int
 }
 
 // Mod7ElevenCD is an 11-digit mod7 CD key
 type Mod7ElevenCD struct {
-	First  string
+	First  int
 	Second int
 }
 
@@ -49,7 +49,7 @@ func checkdigitCheck(k int) bool {
 }
 
 func (c Mod7ElevenCD) String() string {
-	return fmt.Sprintf("%s-%07d", c.First, c.Second)
+	return fmt.Sprintf("%04d-%07d", c.First, c.Second)
 }
 
 // Generate generates an 11-digit mod7 CD key.
@@ -58,7 +58,6 @@ func (c *Mod7ElevenCD) Generate() error {
 	// Formula for last digit: third digit + 1 or 2. If the result is more than 9, it's 0 or 1.
 	s := rand.Intn(999)
 	last := s % 10
-	first := ""
 	fourth := 0
 	switch {
 	default:
@@ -72,7 +71,7 @@ func (c *Mod7ElevenCD) Generate() error {
 	case fourth > 10:
 		fourth = 1
 	}
-	first = fmt.Sprintf("%03d%d", s, fourth)
+	first := s*10 + fourth
 
 	// Generate the second segment of the key. The digit sum of the seven numbers must be divisible by seven.
 	// The last digit is the check digit. The check digit cannot be 0 or >=8.

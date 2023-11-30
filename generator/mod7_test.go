@@ -57,7 +57,7 @@ func TestMod7ElevenCD(t *testing.T) {
 	ka := make([]validator.Mod7ElevenCD, 0)
 	for i := 0; i < 500000; i++ {
 		cd.Generate()
-		ka = append(ka, validator.Mod7ElevenCD{cd.First, fmt.Sprintf("%07d", cd.Second)})
+		ka = append(ka, validator.Mod7ElevenCD{fmt.Sprintf("%04d", cd.First), fmt.Sprintf("%07d", cd.Second)})
 	}
 	for _, k := range ka {
 		err := k.Validate()
