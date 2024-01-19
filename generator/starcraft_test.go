@@ -19,7 +19,7 @@ func TestStarCraft(t *testing.T) {
 	k := StarCraft{}
 	for i := 0; i < 500000; i++ {
 		k.Generate()
-		v := validator.StarCraft{k.String()}
+		v := validator.StarCraft{Key: k.String()}
 		err := v.Validate()
 		if err != nil {
 			t.Errorf("invalid key %s generated (%s)", k.String(), err)

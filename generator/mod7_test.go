@@ -40,7 +40,7 @@ func TestCD(t *testing.T) {
 	ka := make([]validator.Mod7CD, 0)
 	for i := 0; i < 500000; i++ {
 		cd.Generate()
-		ka = append(ka, validator.Mod7CD{fmt.Sprintf("%03d", cd.First), fmt.Sprintf("%07d", cd.Second), false})
+		ka = append(ka, validator.Mod7CD{First: fmt.Sprintf("%03d", cd.First), Second: fmt.Sprintf("%07d", cd.Second), Is95: false})
 	}
 	for _, k := range ka {
 		err := k.Validate()
@@ -57,7 +57,7 @@ func TestMod7ElevenCD(t *testing.T) {
 	ka := make([]validator.Mod7ElevenCD, 0)
 	for i := 0; i < 500000; i++ {
 		cd.Generate()
-		ka = append(ka, validator.Mod7ElevenCD{fmt.Sprintf("%04d", cd.First), fmt.Sprintf("%07d", cd.Second)})
+		ka = append(ka, validator.Mod7ElevenCD{First: fmt.Sprintf("%04d", cd.First), Second: fmt.Sprintf("%07d", cd.Second)})
 	}
 	for _, k := range ka {
 		err := k.Validate()
@@ -74,7 +74,7 @@ func TestOEM(t *testing.T) {
 	ka := make([]validator.Mod7OEM, 0)
 	for i := 0; i < 500000; i++ {
 		oem.Generate()
-		ka = append(ka, validator.Mod7OEM{oem.First, oem.Second, fmt.Sprintf("%07d", oem.Third), fmt.Sprintf("%05d", oem.Fourth), false})
+		ka = append(ka, validator.Mod7OEM{First: oem.First, Second: oem.Second, Third: fmt.Sprintf("%07d", oem.Third), Fourth: fmt.Sprintf("%05d", oem.Fourth), Is95: false})
 	}
 	for _, k := range ka {
 		err := k.Validate()
