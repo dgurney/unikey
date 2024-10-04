@@ -9,11 +9,13 @@ var valid = []KeyValidator{
 	Mod7CD{"118", "5688143", false},
 	Mod7OEM{"10000", "OEM", "0000007", "00000", false},
 	Mod7OEM{"32299", "OEM", "0840621", "16752", false},
-	Mod7ElevenCD{"1112", "0000007"},
-	Mod7ElevenCD{"9991", "1111111"},
-	Mod7ElevenCD{"9990", "1111111"},
-	Mod7ElevenCD{"8889", "1111111"},
-	Mod7ElevenCD{"8880", "1111111"},
+	Mod7ElevenCD{"1112", "0000007", true},
+	Mod7ElevenCD{"9991", "1111111", true},
+	Mod7ElevenCD{"9990", "1111111", true},
+	Mod7ElevenCD{"8889", "1111111", true},
+	Mod7ElevenCD{"8880", "1111111", true},
+	// check digit rule disabled (Office 97)
+	Mod7ElevenCD{"1112", "0000000", false},
 
 	// Windows 95 does not have a check digit check
 	Mod7CD{"111", "1111109", true},
@@ -49,19 +51,19 @@ var invalid = []KeyValidator{
 	Mod7CD{"332", "5683148", false},
 	// Invalid main segment
 	Mod7CD{"332", "5688313", false},
-	Mod7ElevenCD{"1", "1"},
-	Mod7ElevenCD{"111a", "1111111"},
-	Mod7ElevenCD{"1111", "a111111"},
+	Mod7ElevenCD{"1", "1", true},
+	Mod7ElevenCD{"111a", "1111111", true},
+	Mod7ElevenCD{"1111", "a111111", true},
 	// Invalid first segment
-	Mod7ElevenCD{"1114", "1111111"},
-	Mod7ElevenCD{"1117", "1111111"},
-	Mod7ElevenCD{"8881", "1111111"},
-	Mod7ElevenCD{"8885", "1111111"},
-	Mod7ElevenCD{"9992", "1111111"},
+	Mod7ElevenCD{"1114", "1111111", true},
+	Mod7ElevenCD{"1117", "1111111", true},
+	Mod7ElevenCD{"8881", "1111111", true},
+	Mod7ElevenCD{"8885", "1111111", true},
+	Mod7ElevenCD{"9992", "1111111", true},
 	// Invalid digit sum
-	Mod7ElevenCD{"0001", "5688144"},
-	// Invalid check digit
-	Mod7ElevenCD{"1112", "1111118"},
+	Mod7ElevenCD{"0001", "5688144", true},
+	// Invalid check digit with rule enabled
+	Mod7ElevenCD{"1112", "1111118", true},
 	Mod7OEM{"1", "1", "1", "1", false},
 	Mod7OEM{"1000a", "OEM", "0000007", "11111", false},
 	Mod7OEM{"10000", "OEM", "000000a", "11111", false},

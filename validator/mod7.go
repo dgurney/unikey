@@ -35,20 +35,21 @@ type Mod7OEM struct {
 	Second string
 	Third  string
 	Fourth string
-	Is95   bool
+	Is95   bool // This determines whether year 03 in first segment is allowed (Windows 95 caps at 02)
 }
 
 // Mod7ElevenCD is an 11-digit mod7 CD key
 type Mod7ElevenCD struct {
-	First  string
-	Second string
+	First                string
+	Second               string
+	EnableCheckDigitRule bool // Make toggleable in case something checks it. At least Office 97 does not care about the last digit of the second segment (and is thus broken, allowing all zeroes).
 }
 
 // Mod7CD is an 10-digit mod7 CD key
 type Mod7CD struct {
 	First  string
 	Second string
-	Is95   bool
+	Is95   bool // Enable more lax rules used by Windows 95 and other early products. When true do not check second segment check digit (rule did not exist), or first segment being numeric.
 }
 
 // Validate validates an 11-digit mod7 CD key
@@ -81,7 +82,7 @@ func (e Mod7ElevenCD) Validate() error {
 		}
 	}
 
-	if !checkdigitCheck(main) {
+	if e.EnableCheckDigitRule && !checkdigitCheck(main) {
 		return fmt.Errorf("check digit of the second segment should be > 0 and < 8, not %d", main%10)
 	}
 	sum := digitsum(main)

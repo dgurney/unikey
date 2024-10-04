@@ -74,7 +74,8 @@ func (c *Mod7ElevenCD) Generate() error {
 	first := s*10 + fourth
 
 	// Generate the second segment of the key. The digit sum of the seven numbers must be divisible by seven.
-	// The last digit is the check digit. The check digit cannot be 0 or >=8.
+	// In this code the check digit logic familiar from later CD keys is used, but at least Office 97 allows an all-zeroes second segment (how did that pass QA?)
+	// We check anyway, as the rule could be enforced on some products (needs further research)
 	second := 0
 	for {
 		second = rand.Intn(9999999)
