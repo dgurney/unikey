@@ -65,13 +65,8 @@ func (c *Mod7ElevenCD) Generate() error {
 	case rand.Intn(2) == 1:
 		fourth = last + 2
 	}
-	switch {
-	case fourth == 10:
-		fourth = 0
-	case fourth > 10:
-		fourth = 1
-	}
-	first := s*10 + fourth
+
+	first := s*10 + fourth%10
 
 	// Generate the second segment of the key. The digit sum of the seven numbers must be divisible by seven.
 	// In this code the check digit logic familiar from later CD keys is used, but at least Office 97 allows an all-zeroes second segment (how did that pass QA?)
