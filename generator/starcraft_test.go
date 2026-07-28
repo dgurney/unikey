@@ -8,8 +8,8 @@ import (
 
 func BenchmarkStarCraft(b *testing.B) {
 	k := StarCraft{}
-	for n := 0; n < b.N; n++ {
-		for i := 0; i < 100; i++ {
+	for range b.N {
+		for range 100 {
 			k.Generate()
 		}
 	}
@@ -17,13 +17,18 @@ func BenchmarkStarCraft(b *testing.B) {
 
 func TestStarCraft(t *testing.T) {
 	k := StarCraft{}
-	for i := 0; i < 500000; i++ {
+	for range 10_000 {
 		k.Generate()
 		v := validator.StarCraft{Key: k.String()}
-		err := v.Validate()
-		if err != nil {
-			t.Errorf("invalid key %s generated (%s)", k.String(), err)
-			return
+		if err := v.Validate(); err != nil {
+			t.Fatalf("generated key %s is invalid: %v", k, err)
 		}
+	}
+}
+
+func TestStarCraftZeroValue(t *testing.T) {
+	var key StarCraft
+	if key.String() != "" {
+		t.Fatalf("zero-value key should be empty, got %q", key)
 	}
 }

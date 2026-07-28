@@ -3,66 +3,58 @@ package generator
 import (
 	"fmt"
 	"io"
-	"math/rand"
+	"math/rand/v2"
 
 	"golang.org/x/crypto/md4"
 )
 
-// ChicagoCredentials is exactly what it says on the tin
+// ChicagoCredentials contains a Chicago site ID, password, and build.
 type ChicagoCredentials struct {
 	Site string
-	// Password can also be used for providing the 4 beginning bits
+	// Password may contain the four-character password prefix before generation.
 	Password string
 	Build    string
 }
 
-// Used for md4 hash generation
 func getText(build string) (string, error) {
-	switch {
-	case build == "73f":
+	switch build {
+	case "73f":
 		return "Microsoft Chicago PDK Release, November 1993", nil
-	case build == "73g":
+	case "73g":
 		return "Microsoft Chicago PDK2 Release, December 1993", nil
-	case build == "81":
+	case "81":
 		return "Chicago Preliminary PDK Release, January 1994", nil
-	case build == "99":
-		// up to 116
+	case "99":
 		return "Chicago Preliminary Beta 1 Release, May 1994", nil
-	case build == "122":
-		// up to 189
+	case "122":
 		return "Chicago Beta 1 Release, May 1994", nil
-	case build == "216":
-		// Up to 302
+	case "216":
 		return "Windows 95 Beta 2 Release, October 1994", nil
-		// Internet Explorer 4
-	case build == "ie4july":
-		// 4.70.1169
+	case "ie4july":
 		return "Microsoft Internet Explorer 4.0 alpha 2 July 1996 release", nil
-	case build == "ie4sept":
-		// 4.71.0225
+	case "ie4sept":
 		return "Microsoft Internet Explorer 4.0 Beta - Sept. 1996 release", nil
+	default:
+		return "", fmt.Errorf("invalid build %q", build)
 	}
-	return "Fix your code", fmt.Errorf("invalid build")
 }
 
 func (c ChicagoCredentials) String() string {
 	return c.Site + "/" + c.Password
 }
 
-// Generate generates credentials for the build specified in c.Build
+// Generate populates credentials for c.Build.
 func (c *ChicagoCredentials) Generate() error {
 	site := c.Site
 	if c.Site == "" {
-		site = fmt.Sprintf("%06d", rand.Intn(999999))
+		site = fmt.Sprintf("%06d", rand.IntN(1_000_000))
 	}
 
-	// First part of the password
 	pass := c.Password
 	if c.Password == "" {
-		pass = fmt.Sprintf("%04x", rand.Intn(65535))
+		pass = fmt.Sprintf("%04x", rand.IntN(1<<16))
 	}
 
-	// Highly secure hashing right here
 	hash := md4.New()
 	text, err := getText(c.Build)
 	if err != nil {
@@ -74,7 +66,6 @@ func (c *ChicagoCredentials) Generate() error {
 
 	last := fmt.Sprintf("%x%x", sum[1:2], sum[0:1])
 
-	// Sum all ascii character codes together
 	middle := 0
 	for i := range site {
 		middle += int(site[i])
@@ -87,7 +78,6 @@ func (c *ChicagoCredentials) Generate() error {
 	}
 
 	c.Site = site
-	// Middle must be mod9'd
 	c.Password = fmt.Sprintf("%s%d%s", pass, middle%9, last)
 	return nil
 }

@@ -1,6 +1,6 @@
 package generator
 
-func digitsum(num int) int {
+func digitSum(num int) int {
 	s := 0
 	for num != 0 {
 		digit := num % 10

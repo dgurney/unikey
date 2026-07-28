@@ -3,12 +3,13 @@ package validator
 import "testing"
 
 var valid = []KeyValidator{
-	// beginning of mod7
 	Mod7CD{"111", "1111111", false},
 	Mod7CD{"000", "0000007", false},
 	Mod7CD{"118", "5688143", false},
+	Mod7CD{"998", "0000007", false},
 	Mod7OEM{"10000", "OEM", "0000007", "00000", false},
 	Mod7OEM{"32299", "OEM", "0840621", "16752", false},
+	Mod7OEM{"36696", "OEM", "0000007", "99999", false},
 	Mod7ElevenCD{"1112", "0000007", true},
 	Mod7ElevenCD{"9991", "1111111", true},
 	Mod7ElevenCD{"9990", "1111111", true},
@@ -21,9 +22,6 @@ var valid = []KeyValidator{
 	Mod7CD{"111", "1111109", true},
 	// Windows 95 does actually allow typing non-integer site numbers
 	Mod7CD{"AAA", "1111109", true},
-	// end of mod7
-
-	// beginning of starcraft
 	StarCraft{"8206-64645-5171"},
 	StarCraft{"1234-56789-1234"},
 	StarCraft{"2374-81224-9423"},
@@ -31,13 +29,13 @@ var valid = []KeyValidator{
 	StarCraft{"2374A81224B9423"},
 	// key can be provided without separators
 	StarCraft{"1234567891234"},
-	// end of starcraft
 }
 
 var invalid = []KeyValidator{
-	// beginning of mod7
 	Mod7CD{"1", "1", false},
+	Mod7CD{"", "0000000000", false},
 	Mod7CD{"11a", "1111111", false},
+	Mod7CD{"+11", "1111111", false},
 	Mod7CD{"111", "a111111", false},
 	// Invalid site
 	Mod7CD{"333", "5688143", false},
@@ -52,6 +50,7 @@ var invalid = []KeyValidator{
 	// Invalid main segment
 	Mod7CD{"332", "5688313", false},
 	Mod7ElevenCD{"1", "1", true},
+	Mod7ElevenCD{"", "00000000000", true},
 	Mod7ElevenCD{"111a", "1111111", true},
 	Mod7ElevenCD{"1111", "a111111", true},
 	// Invalid first segment
@@ -65,6 +64,7 @@ var invalid = []KeyValidator{
 	// Invalid check digit with rule enabled
 	Mod7ElevenCD{"1112", "1111118", true},
 	Mod7OEM{"1", "1", "1", "1", false},
+	Mod7OEM{"", "OEM", "0000007", "0000000000", false},
 	Mod7OEM{"1000a", "OEM", "0000007", "11111", false},
 	Mod7OEM{"10000", "OEM", "000000a", "11111", false},
 	Mod7OEM{"10000", "OEM", "0000007", "1111a", false},
@@ -85,22 +85,18 @@ var invalid = []KeyValidator{
 
 	// Windows 95 does not allow year 03
 	Mod7OEM{"10003", "OEM", "0000007", "12345", true},
-	// end of mod7
-
-	// beginning of starcraft
-	// wrong check digits
+	// Wrong check digits
 	StarCraft{"8206-64645-5172"},
 	StarCraft{"1234-56789-1230"},
 
-	// typo
+	// Typo
 	StarCraft{"8260-64645-5172"},
 
-	// letter in key
+	// Letter in key
 	StarCraft{"a206-64645-5172"},
 
-	// short
+	// Short
 	StarCraft{"8206"},
-	// end of starcraft
 }
 
 func TestValidation(t *testing.T) {

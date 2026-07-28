@@ -1,2 +1,2 @@
-// Package unikey is a versatile library for generating and validating license keys and other similar license schemes
+// Package unikey generates and validates license keys.
 package unikey

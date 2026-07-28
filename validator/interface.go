@@ -1,6 +1,6 @@
 package validator
 
-// KeyValidator is exactly what it says on the tin.
+// KeyValidator validates a license key.
 type KeyValidator interface {
 	Validate() error
 }

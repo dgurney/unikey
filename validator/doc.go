@@ -1,2 +1,2 @@
-// Package validator implements all supported validators
+// Package validator implements the supported license-key validators.
 package validator

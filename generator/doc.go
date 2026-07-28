@@ -1,2 +1,2 @@
-// Package generator implements all supported generators
+// Package generator implements the supported license-key generators.
 package generator

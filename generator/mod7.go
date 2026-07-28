@@ -16,36 +16,32 @@ package generator
 
 import (
 	"fmt"
-	"math/rand"
-	"strconv"
+	"math/rand/v2"
 )
 
-// Mod7OEM is a mod7 OEM key
+// Mod7OEM is a mod7 OEM key.
 type Mod7OEM struct {
-	First  string // This is a string instead of int to maintain generator simplicity and performance
+	First  string
 	Second string
-	Third  int // you must prepend 0 if using this field directly
+	Third  int // String formats this segment with its required leading zero.
 	Fourth int
 }
 
-// Mod7ElevenCD is an 11-digit mod7 CD key
+// Mod7ElevenCD is an 11-digit mod7 CD key.
 type Mod7ElevenCD struct {
 	First  int
 	Second int
 }
 
-// Mod7CD is an 10-digit mod7 CD key
+// Mod7CD is a 10-digit mod7 CD key.
 type Mod7CD struct {
 	First  int
 	Second int
 }
 
-func checkdigitCheck(k int) bool {
-	// Check digit cannot be 0 or >= 8.
-	if k%10 == 0 || k%10 >= 8 {
-		return false
-	}
-	return true
+func validCheckDigit(k int) bool {
+	checkDigit := k % 10
+	return checkDigit > 0 && checkDigit < 8
 }
 
 func (c Mod7ElevenCD) String() string {
@@ -53,36 +49,22 @@ func (c Mod7ElevenCD) String() string {
 }
 
 // Generate generates an 11-digit mod7 CD key.
-func (c *Mod7ElevenCD) Generate() error {
-	// Generate the first segment of the key.
-	// Formula for last digit: third digit + 1 or 2. If the result is more than 9, it's 0 or 1.
-	s := rand.Intn(999)
+func (c *Mod7ElevenCD) Generate() {
+	s := rand.IntN(1_000)
 	last := s % 10
-	fourth := 0
-	switch {
-	default:
-		fourth = last + 1
-	case rand.Intn(2) == 1:
-		fourth = last + 2
-	}
-
+	fourth := last + rand.IntN(2) + 1
 	first := s*10 + fourth%10
 
-	// Generate the second segment of the key. The digit sum of the seven numbers must be divisible by seven.
-	// In this code the check digit logic familiar from later CD keys is used, but at least Office 97 allows an all-zeroes second segment (how did that pass QA?)
-	// We check anyway, as the rule could be enforced on some products (needs further research)
 	second := 0
 	for {
-		second = rand.Intn(9999999)
-		// Perform the actual validation
-		sum := digitsum(second)
-		if sum%7 == 0 && checkdigitCheck(second) {
+		second = rand.IntN(10_000_000)
+		sum := digitSum(second)
+		if sum%7 == 0 && validCheckDigit(second) {
 			break
 		}
 	}
 	c.First = first
 	c.Second = second
-	return nil
 }
 
 func (c Mod7CD) String() string {
@@ -90,87 +72,56 @@ func (c Mod7CD) String() string {
 }
 
 // Generate generates a 10-digit mod7 CD key.
-func (c *Mod7CD) Generate() error {
-	// Generate the so-called site number, which is the first segment of the key.
-	first := rand.Intn(998)
-	// Technically 999 could be omitted as we don't generate a number that high, but we include it for posterity anyway.
-	invalidSites := []int{333, 444, 555, 666, 777, 888, 999}
-	for _, v := range invalidSites {
-		if v == first {
-			// Site number is invalid, so we replace it with a guaranteed valid number
-			first = rand.Intn(300)
-		}
+func (c *Mod7CD) Generate() {
+	first := rand.IntN(999)
+	switch first {
+	case 333, 444, 555, 666, 777, 888:
+		first = rand.IntN(300)
 	}
 
-	// Generate the second segment of the key. The digit sum of the seven numbers must be divisible by seven.
-	// The last digit is the check digit. The check digit cannot be 0 or >=8.
-	// Note that Windows 95 does not have a check digit check.
 	second := 0
 	for {
-		second = rand.Intn(9999999)
-		// Perform the actual validation
-		sum := digitsum(second)
-		if sum%7 == 0 && checkdigitCheck(second) {
+		second = rand.IntN(10_000_000)
+		sum := digitSum(second)
+		if sum%7 == 0 && validCheckDigit(second) {
 			break
 		}
 	}
 	c.First = first
 	c.Second = second
-	return nil
 }
 
 func (o Mod7OEM) String() string {
 	return fmt.Sprintf("%s-%s-0%06d-%05d", o.First, o.Second, o.Third, o.Fourth)
 }
 
-// Generate generates a mod7 OEM key
-func (o *Mod7OEM) Generate() error {
-	// Generate the first segment of the key. The first three digits represent the julian date the COA was printed (001 to 366), and the last two are the year.
-	// The year cannot be below 95 or above 03 (not Y2K-compliant D:).
-	// The maximum year for Windows 95 is 02.
-	d := rand.Intn(366)
-	for d == 0 {
-		d = rand.Intn(366)
-	}
-	first := ""
-
+// Generate generates a mod7 OEM key.
+func (o *Mod7OEM) Generate() {
+	d := rand.IntN(366) + 1
 	date := fmt.Sprintf("%03d", d)
-	// 03 is also valid for many later products, but for Windows 95 it is not
 	years := []string{"95", "96", "97", "98", "99", "00", "01", "02"}
-	year := years[rand.Intn(len(years))]
+	year := years[rand.IntN(len(years))]
 
-	// Check that year is actually a leap year and adjust day 366 to 365 accordingly if not
-	y2kify := func(y string) int {
-		yearInt, _ := strconv.Atoi(y)
-		switch {
-		case yearInt >= 95:
-			return 1900 + yearInt
-		default:
-			return 2000 + yearInt
-		}
-	}(year)
-	if !isLeap(y2kify) && date == "366" {
+	yearNumber := int(year[0]-'0')*10 + int(year[1]-'0')
+	fullYear := 2000 + yearNumber
+	if yearNumber >= 95 {
+		fullYear = 1900 + yearNumber
+	}
+	if !isLeap(fullYear) && date == "366" {
 		date = "365"
 	}
 
-	first = date + year
-
-	// The third segment (OEM is the second) must begin with a zero, but otherwise it follows the same rule as the second segment of 10-digit keys:
-	// The digit sum must be divisible by seven, and the check digit cannot be 0 or >=8.
 	third := 0
 	for {
-		third = rand.Intn(999999)
-		// Perform the actual validation
-		sum := digitsum(third)
-		if sum%7 == 0 && checkdigitCheck(third) {
+		third = rand.IntN(1_000_000)
+		sum := digitSum(third)
+		if sum%7 == 0 && validCheckDigit(third) {
 			break
 		}
 	}
 
-	// The fourth segment is truly irrelevant
-	o.First = first
+	o.First = date + year
 	o.Second = "OEM"
 	o.Third = third
-	o.Fourth = rand.Intn(99999)
-	return nil
+	o.Fourth = rand.IntN(100_000)
 }
